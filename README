@@ -1,0 +1,91 @@
+Xcode projects are included for the following libraries. The projects were
+created following the guidelines in the "UPDATING" document.
+
+JPEG
+http://www.ijg.org/
+Release 7
+http://www.ijg.org/files/jpegsrc.v7.tar.gz
+
+MAD
+http://www.underbit.com/products/mad/
+Release 0.15.1b
+http://sourceforge.net/projects/mad/files/libmad/0.15.1b/libmad-0.15.1b.tar.gz/download
+
+Note: mad sets some preprocessor macros on a per-arch basis;
+      build_config.sh was modified to write them into config.h.
+
+PNG
+http://www.libpng.org/
+Release 1.2.40
+http://prdownloads.sourceforge.net/libpng/libpng-1.2.40.tar.gz?download
+
+SNDFILE
+http://www.mega-nerd.com/libsndfile/
+Release 1.0.20
+http://www.mega-nerd.com/libsndfile/libsndfile-1.0.20.tar.gz
+
+Note: sndfile.h is also generated dynamically; build_config.sh
+      was modified to account for this file.
+
+SPEEX
+http://www.speex.org/
+Release 1.2rc1
+http://downloads.xiph.org/releases/speex/speex-1.2rc1.tar.gz
+
+-----
+
+Aleph One also uses the following libraries, which provide an official
+framework binary or Xcode project file:
+
+OGG
+http://www.xiph.org/ogg/
+Release 1.1.4
+http://downloads.xiph.org/releases/ogg/libogg-1.1.4.tar.gz
+
+Source only; Xcode project file is located in macosx/Ogg.xcodeproj
+
+Note: Change "C/C++ Compiler Version" to "GCC 4.0"
+      Change "Installation Directory" to "@executable_path/../Frameworks"
+
+SDL
+http://www.libsdl.org/
+Release 1.2.14
+http://www.libsdl.org/release/SDL-1.2.14.dmg
+
+SDL_IMAGE
+http://www.libsdl.org/projects/SDL_image/
+Release 1.2.10
+http://www.libsdl.org/projects/SDL_image/release/SDL_image-1.2.10.dmg
+
+SDL_NET
+http://www.libsdl.org/projects/SDL_net/
+Release 1.2.7
+http://www.libsdl.org/projects/SDL_net/release/SDL_net-1.2.7.dmg
+
+SDL_TTF
+http://www.libsdl.org/projects/SDL_ttf/
+Release 2.0.8
+http://www.libsdl.org/projects/SDL_ttf/release/SDL_ttf-2.0.8.dmg
+
+Note: 2.0.9 is the latest version, but it introduces an unwanted dependency
+      on libfreetype (from the optional X11 component of Mac OS X).
+
+SMPEG
+http://icculus.org/smpeg/
+Revision 389 of SVN trunk
+svn://svn.icculus.org/smpeg/trunk
+
+Source only; Xcode project file is inside Xcode.tar.gz
+
+Note: Change "Architectures" to "32-bit Universal"
+
+VORBIS
+http://www.vorbis.com/
+Release 1.2.3
+http://downloads.xiph.org/releases/vorbis/libvorbis-1.2.3.tar.gz
+
+Source only; Xcode project file is located in macosx/Vorbis.xcodeproj
+
+Note: Change "C/C++ Compiler Version" to "GCC 4.0"
+      Change "Installation Directory" to "@executable_path/../Frameworks"
+

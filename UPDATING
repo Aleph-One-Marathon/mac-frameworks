@@ -1,0 +1,86 @@
+Maintaining Mac OS X Frameworks for Aleph One
+
+Dev environment: Xcode 3.2, 10.6 Snow Leopard
+Compilation target: 32-bit Universal Binary, 10.4 Tiger
+
+This guide assumes you've already worked out any kinks building the library
+with the normal configure/make process. Take note of any special configure
+flags, any defines passed to GCC, and which sources need to get built.
+
+
+CREATING A NEW FRAMEWORK:
+
+1. Xcode Project Setup
+
+1a. Create a new project in Xcode, with the "Cocoa Framework" template.
+    Name the project with the library name, not including the "lib" part.
+
+2. Config.h Generation
+
+2a. Unpack a clean copy of the library source and place it in the project
+    directory. Name the source directory "lib<project>", not including any
+    version number.
+
+2b. Copy the "build_config.sh" script into the project directory. Edit
+    the options at the top of the script as needed, and run the script from
+    the project directory. This should create a "config" directory with a
+    "config.h" file (or whatever the proper config.h name is).
+
+3. Xcode Source Setup
+
+3a. Add the generated config/config.h to the project, by right-clicking the
+    "Classes" folder and choosing Add -> Existing Files...
+    In the resulting options dialog:
+      * Uncheck "Copy items into destination group's folder"
+      * Check "<project>" under "Add To Targets"
+
+3b. Add the other source and header files from "lib<project>" the same way.
+    You can shift-click or command-click to add multiple files in one step.
+    This is the most error-prone step, you may need to review the make
+    process to ensure you get the correct files for the library itself.
+
+3c. Navigate in the sidebar to Targets -> <project> -> Copy Headers and
+    change the "Role" column to "Public" for all headers that should be
+    installed into the framework. This corresponds to the "make install"
+    step.
+
+3d. Choose Project -> Edit Active Target, and switch to the Build tab.
+    
+    Change "Architectures" to "32-bit Universal"
+    Change "Base SDK" to "Mac OS X 10.4"
+    Change "C/C++ Compiler Version" to "GCC 4.0"
+    Change "Installation Directory" to "@executable_path/../Frameworks"
+    Change "Preprocessor Macros" to "HAVE_CONFIG_H"
+    
+    You may also need to add additional Preprocessor Macros, depending on
+    the project. Refer to the original make process.
+
+3e. Add necessary dependencies, such as libz. Right-click the "External
+    Frameworks and Libraries" folder, and choose Add -> Existing Frameworks.
+    This process works for both Mac Frameworks and standard dylibs.
+
+4. Build
+
+4a. Make sure the following menu items are set:
+      Project -> Set Active Build Configuration -> Release
+      Project -> Set Active SDK -> Use Base SDK
+
+4b. Choose Build -> Build, and if you're lucky the build will succeed.
+
+4c. The framework will be located in <project dir>/build/Release. You can
+    copy this into /Library/Frameworks for use in Aleph One.
+
+
+UPDATING A FRAMEWORK WITH FRESH SOURCES:
+
+1. Unpack a clean copy of the latest source, as in step 2a above.
+
+2. Update the "build_config.sh" script as necessary, and run as in step 2b
+   above.
+
+3. Add any new source files to the Xcode project, as in steps 3b-3c above. If
+   old files are obsolete, right-click on them in Xcode and choose "Delete".
+
+4. Choose Build -> Clean, and click "Clean"
+
+5. Build as in steps 4a-4c above.
