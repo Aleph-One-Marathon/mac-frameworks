@@ -1,6 +1,14 @@
 Xcode projects are included for the following libraries. The projects were
 created following the guidelines in the "UPDATING" document.
 
+FREETYPE
+http://www.freetype.org/
+Release 2.3.11
+http://sourceforge.net/projects/freetype/files/freetype2/2.3.11/freetype-2.3.11.tar.bz2/download
+
+Note: because of FreeType's complex header structure, the project
+      has a "Copy Files" phase to include the proper headers.
+
 JPEG
 http://www.ijg.org/
 Release 7
@@ -64,12 +72,19 @@ http://www.libsdl.org/projects/SDL_net/release/SDL_net-1.2.7.dmg
 
 SDL_TTF
 http://www.libsdl.org/projects/SDL_ttf/
-Release 2.0.8
-http://www.libsdl.org/projects/SDL_ttf/release/SDL_ttf-2.0.8.dmg
+Revision 5226 of SVN trunk
+http://svn.libsdl.org/trunk/SDL_ttf
 
-Note: 2.0.9 is the latest version, but it introduces an unwanted dependency
-      on libfreetype (from the optional X11 component of Mac OS X).
+Source only; Xcode project file is inside Xcode.tar.gz
 
+Note: Change "Architectures" to "32-bit Universal"
+      Change "C/C++ Compiler Version" to "GCC 4.0"
+      Remove "Other Linker Flags"
+      Change "Header Search Paths" to remove /usr/X11R6/include entries
+      Change "Header Search Paths" to add "/Library/Frameworks/freetype.framework/Headers"
+      Remove "Library Search Paths"
+      Add freetype.framework to Frameworks section
+      
 SMPEG
 http://icculus.org/smpeg/
 Revision 389 of SVN trunk
