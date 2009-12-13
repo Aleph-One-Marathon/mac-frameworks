@@ -40,6 +40,15 @@ http://www.speex.org/
 Release 1.2rc1
 http://downloads.xiph.org/releases/speex/speex-1.2rc1.tar.gz
 
+ZZIPLIB
+http://zziplib.sourceforge.net/
+Release 0.13.58
+http://sourceforge.net/projects/zziplib/files/zziplib13/0.13.58/zziplib-0.13.58.tar.bz2/download
+
+Note: because of zziplib's unusual header usage, build_config.sh
+      was modified to write the config header into a "zzip"
+      subdirectory, and the Xcode project needed several tweaks.
+
 -----
 
 Aleph One also uses the following libraries, which provide an official
