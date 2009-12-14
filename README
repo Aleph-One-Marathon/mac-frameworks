@@ -6,9 +6,6 @@ http://www.freetype.org/
 Release 2.3.11
 http://sourceforge.net/projects/freetype/files/freetype2/2.3.11/freetype-2.3.11.tar.bz2/download
 
-Note: because of FreeType's complex header structure, the project
-      has a "Copy Files" phase to include the proper headers.
-
 JPEG
 http://www.ijg.org/
 Release 7
@@ -32,9 +29,6 @@ http://www.mega-nerd.com/libsndfile/
 Release 1.0.20
 http://www.mega-nerd.com/libsndfile/libsndfile-1.0.20.tar.gz
 
-Note: sndfile.h is also generated dynamically; build_config.sh
-      was modified to account for this file.
-
 SPEEX
 http://www.speex.org/
 Release 1.2rc1
@@ -45,9 +39,8 @@ http://zziplib.sourceforge.net/
 Release 0.13.58
 http://sourceforge.net/projects/zziplib/files/zziplib13/0.13.58/zziplib-0.13.58.tar.bz2/download
 
-Note: because of zziplib's unusual header usage, build_config.sh
-      was modified to write the config header into a "zzip"
-      subdirectory, and the Xcode project needed several tweaks.
+Note: because of zziplib's unusual header usage, the Xcode project
+      needed several tweaks.
 
 -----
 

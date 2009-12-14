@@ -2,15 +2,16 @@
 set -o errexit
 
 ## general compilation targets
-arches=( i386 ppc )
-sdk="/Developer/SDKs/MacOSX10.4u.sdk"
-minver="10.4"
-gccver="4.0"
+arches=( x86_64 i386 ppc )
+sdks=( /Developer/SDKs/MacOSX10.6.sdk /Developer/SDKs/MacOSX10.4u.sdk /Developer/SDKs/MacOSX10.4u.sdk )
+minvers=( 10.6 10.4 10.4 )
+gccvers=( 4.2 4.0 4.0 )
 
 ## project-specific options
 proj="sndfile"
-config_h_filename="config.h"
-config_h_dir="src"
+config_h_filenames=( config.h sndfile.h )
+config_h_indirs=( src src )
+config_h_outdirs=( . . )
 extra_config_opts=""
 
 ### end of config
@@ -21,9 +22,13 @@ configdir="config"
 if [ -e $configdir ]; then
   rm -rf $configdir
 fi
-mkdir $configdir
-outconfig="$configdir/$config_h_filename"
-touch $outconfig
+idx=0
+while [ "$idx" -lt "${#config_h_filenames[@]}" ]; do
+  mkdir -p "$configdir/${config_h_outdirs[idx]}"
+  outconfig="$configdir/${config_h_outdirs[idx]}/${config_h_filenames[idx]}"
+  touch $outconfig
+  ((idx++))
+done
 
 # make clean copy of source tree
 libdir="lib$proj"
@@ -32,14 +37,15 @@ if [ -e $tempdir ]; then
   rm -rf $tempdir
 fi
 cp -a $libdir $tempdir
-inconfig="$tempdir/$config_h_dir/$config_h_filename"
 
 # configure for each arch
-export CC=gcc-$gccver
-export CXX=g++-$gccver
-export LD=g++-$gccver
-for arch in "${arches[@]}"; do
-  export CFLAGS="-arch $arch -isysroot $sdk -mmacosx-version-min=$minver"
+idx=0
+while [ "$idx" -lt "${#arches[@]}" ]; do
+  arch=${arches[idx]}
+  export CC=gcc-${gccvers[idx]}
+  export CXX=g++-${gccvers[idx]}
+  export LD=g++-${gccvers[idx]}
+  export CFLAGS="-arch $arch -isysroot ${sdks[idx]} -mmacosx-version-min=${minvers[idx]}"
   export CXXFLAGS="$CFLAGS"
   export LDFLAGS="$CFLAGS"
   export OBJCFLAGS="$CFLAGS"
@@ -50,23 +56,21 @@ for arch in "${arches[@]}"; do
   popd
   
   # add this config.h to the master copy
-  cat >> $outconfig <<EOM
+  jdx=0
+  while [ "$jdx" -lt "${#config_h_filenames[@]}" ]; do
+    inconfig="$tempdir/${config_h_indirs[jdx]}/${config_h_filenames[jdx]}"
+    outconfig="$configdir/${config_h_outdirs[jdx]}/${config_h_filenames[jdx]}"
+  
+    cat >> $outconfig <<EOM
 #ifdef __${arch}__
 EOM
-  cat $inconfig >> $outconfig
-  cat >> $outconfig <<EOM
+    cat $inconfig >> $outconfig
+    cat >> $outconfig <<EOM
 #endif
 EOM
-
-  # add sndfile.h to the master copy
-  cat >> $configdir/sndfile.h <<EOM
-#ifdef __${arch}__
-EOM
-  cat $tempdir/src/sndfile.h >> $configdir/sndfile.h
-  cat >> $configdir/sndfile.h <<EOM
-#endif
-EOM
-
+    ((jdx++))
+  done
+  ((idx++))
 done
 
 # remove source tree copy

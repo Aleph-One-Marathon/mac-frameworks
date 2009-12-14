@@ -8,7 +8,7 @@ minvers=( 10.6 10.4 10.4 )
 gccvers=( 4.2 4.0 4.0 )
 
 ## project-specific options
-proj="speex"
+proj="template"
 config_h_filenames=( config.h )
 config_h_indirs=( . )
 config_h_outdirs=( . )
