@@ -52,15 +52,29 @@ http://www.xiph.org/ogg/
 Release 1.1.4
 http://downloads.xiph.org/releases/ogg/libogg-1.1.4.tar.gz
 
-Source only; Xcode project file is located in macosx/Ogg.xcodeproj
+Xcode project file is located in macosx/Ogg.xcodeproj
+Build configuration "Release"
 
-Note: Change "C/C++ Compiler Version" to "GCC 4.0"
+Note: Change "Architectures" to "Standard (32/64-bit Universal)"
       Change "Installation Directory" to "@executable_path/../Frameworks"
+      Add the following user-defined settings:
+        GCC_VERSION_i386 = 4.0
+        GCC_VERSION_ppc = 4.0
+        GCC_VERSION_x86_64 = 4.2
+        MACOSX_DEPLOYMENT_TARGET_i386 = 10.4
+        MACOSX_DEPLOYMENT_TARGET_ppc = 10.4
+        MACOSX_DEPLOYMENT_TARGET_x86_64 = 10.6
+        SDKROOT_i386 = macosx10.4
+        SDKROOT_ppc = macosx10.4
+        SDKROOT_x86_64 = macosx10.6
 
 SDL
 http://www.libsdl.org/
-Release 1.2.14
-http://www.libsdl.org/release/SDL-1.2.14.dmg
+Revision 5376 of SVN branch SDL-1.2
+http://svn.libsdl.org/branches/SDL-1.2
+
+Xcode project file is inside Xcode.tar.gz (SDL/SDL.xcodeproj)
+Build configuration "Deployment_for_official_releases_using_10.4SDK_and_10.6SDK"
 
 SDL_IMAGE
 http://www.libsdl.org/projects/SDL_image/
@@ -69,19 +83,21 @@ http://www.libsdl.org/projects/SDL_image/release/SDL_image-1.2.10.dmg
 
 SDL_NET
 http://www.libsdl.org/projects/SDL_net/
-Release 1.2.7
-http://www.libsdl.org/projects/SDL_net/release/SDL_net-1.2.7.dmg
+Revision 5393 of SVN trunk
+http://svn.libsdl.org/trunk/SDL_net
+
+Xcode project file is inside Xcode.tar.gz
+Build configuration "Deployment"
 
 SDL_TTF
 http://www.libsdl.org/projects/SDL_ttf/
 Revision 5226 of SVN trunk
 http://svn.libsdl.org/trunk/SDL_ttf
 
-Source only; Xcode project file is inside Xcode.tar.gz
+Xcode project file is inside Xcode.tar.gz
+Build configuration "Deployment"
 
-Note: Change "Architectures" to "32-bit Universal"
-      Change "C/C++ Compiler Version" to "GCC 4.0"
-      Remove "Other Linker Flags"
+Note: Remove "Other Linker Flags"
       Change "Header Search Paths" to remove /usr/X11R6/include entries
       Change "Header Search Paths" to add "/Library/Frameworks/freetype.framework/Headers"
       Remove "Library Search Paths"
@@ -92,17 +108,26 @@ http://icculus.org/smpeg/
 Revision 389 of SVN trunk
 svn://svn.icculus.org/smpeg/trunk
 
-Source only; Xcode project file is inside Xcode.tar.gz
-
-Note: Change "Architectures" to "32-bit Universal"
+Xcode project file is inside Xcode.tar.gz
+Build configuration "Release"
 
 VORBIS
 http://www.vorbis.com/
 Release 1.2.3
 http://downloads.xiph.org/releases/vorbis/libvorbis-1.2.3.tar.gz
 
-Source only; Xcode project file is located in macosx/Vorbis.xcodeproj
+Xcode project file is located in macosx/Vorbis.xcodeproj
+Build configuration "Release"
 
-Note: Change "C/C++ Compiler Version" to "GCC 4.0"
+Note: Change "Architectures" to "Standard (32/64-bit Universal)"
       Change "Installation Directory" to "@executable_path/../Frameworks"
-
+      Add the following user-defined settings:
+        GCC_VERSION_i386 = 4.0
+        GCC_VERSION_ppc = 4.0
+        GCC_VERSION_x86_64 = 4.2
+        MACOSX_DEPLOYMENT_TARGET_i386 = 10.4
+        MACOSX_DEPLOYMENT_TARGET_ppc = 10.4
+        MACOSX_DEPLOYMENT_TARGET_x86_64 = 10.6
+        SDKROOT_i386 = macosx10.4
+        SDKROOT_ppc = macosx10.4
+        SDKROOT_x86_64 = macosx10.6
