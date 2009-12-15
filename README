@@ -78,8 +78,30 @@ Build configuration "Deployment_for_official_releases_using_10.4SDK_and_10.6SDK"
 
 SDL_IMAGE
 http://www.libsdl.org/projects/SDL_image/
-Release 1.2.10
-http://www.libsdl.org/projects/SDL_image/release/SDL_image-1.2.10.dmg
+Revision 5322 of SVN trunk
+http://svn.libsdl.org/trunk/SDL_image
+
+Xcode project file is inside Xcode.tar.gz
+Build configuration "Deployment_ImageIO"
+
+Note: Change "Header Search Paths" to add "/Library/Frameworks/jpeg.framework/Headers"
+      Change "Header Search Paths" to add "/Library/Frameworks/png.framework/Headers"
+      Change "Preprocessor Macros" to add:
+        LOAD_BMP
+        LOAD_GIF
+        LOAD_JPG
+        LOAD_PNG
+        LOAD_TGA
+        SDL_IMAGE_USE_COMMON_BACKEND
+      Add jpeg.framework to Frameworks section
+      Add png.framework to Frameworks section
+      Check the compile box all unchecked files in the Library Source section:
+        IMG_bmp.c
+        IMG_gif.c
+        IMG_jpg.c
+        IMG_png.c
+        IMG_tga.c
+        IMG_tif.c
 
 SDL_NET
 http://www.libsdl.org/projects/SDL_net/
