@@ -4,7 +4,8 @@
 /*                                                                         */
 /*    PostScript Type 1 decoding routines (body).                          */
 /*                                                                         */
-/*  Copyright 2000-2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009 by */
+/*  Copyright 2000-2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009    */
+/*            2010 by                                                      */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -211,7 +212,12 @@
 
     /* `glyph_names' is set to 0 for CID fonts which do not */
     /* include an encoding.  How can we deal with these?    */
+#ifdef FT_CONFIG_OPTION_INCREMENTAL
+    if ( decoder->glyph_names == 0                   &&
+         !face->root.internal->incremental_interface )
+#else
     if ( decoder->glyph_names == 0 )
+#endif /* FT_CONFIG_OPTION_INCREMENTAL */
     {
       FT_ERROR(( "t1operator_seac:"
                  " glyph names table not available in this font\n" ));
@@ -365,15 +371,6 @@
 #ifdef FT_DEBUG_LEVEL_TRACE
     FT_Bool          bol = TRUE;
 #endif
-
-
-    /* we don't want to touch the source code -- use macro trick */
-#define start_point    t1_builder_start_point
-#define check_points   t1_builder_check_points
-#define add_point      t1_builder_add_point
-#define add_point1     t1_builder_add_point1
-#define add_contour    t1_builder_add_contour
-#define close_contour  t1_builder_close_contour
 
 
     /* compute random seed from stack address of parameter */
@@ -733,8 +730,10 @@
 
           decoder->flex_state        = 1;
           decoder->num_flex_vectors  = 0;
-          if ( start_point( builder, x, y ) ||
-               check_points( builder, 6 )   )
+          if ( ( error = t1_builder_start_point( builder, x, y ) )
+                 != PSaux_Err_Ok                                   ||
+               ( error = t1_builder_check_points( builder, 6 ) )
+                 != PSaux_Err_Ok                                   )
             goto Fail;
           break;
 
@@ -751,10 +750,10 @@
             /* point without adding any point to the outline    */
             idx = decoder->num_flex_vectors++;
             if ( idx > 0 && idx < 7 )
-              add_point( builder,
-                         x,
-                         y,
-                         (FT_Byte)( idx == 3 || idx == 6 ) );
+              t1_builder_add_point( builder,
+                                    x,
+                                    y,
+                                    (FT_Byte)( idx == 3 || idx == 6 ) );
           }
           break;
 
@@ -771,6 +770,8 @@
           }
 
           /* the two `results' are popped by the following setcurrentpoint */
+          top[0] = x;
+          top[1] = y;
           known_othersubr_result_cnt = 2;
           break;
 
@@ -1069,7 +1070,7 @@
         case op_endchar:
           FT_TRACE4(( " endchar\n" ));
 
-          close_contour( builder );
+          t1_builder_close_contour( builder );
 
           /* close hints recording session */
           if ( hinter )
@@ -1168,7 +1169,7 @@
           /* if there is no path, `closepath' is a no-op */
           if ( builder->parse_state == T1_Parse_Have_Path   ||
                builder->parse_state == T1_Parse_Have_Moveto )
-            close_contour( builder );
+            t1_builder_close_contour( builder );
 
           builder->parse_state = T1_Parse_Have_Width;
           break;
@@ -1176,7 +1177,8 @@
         case op_hlineto:
           FT_TRACE4(( " hlineto" ));
 
-          if ( start_point( builder, x, y ) )
+          if ( ( error = t1_builder_start_point( builder, x, y ) )
+                 != PSaux_Err_Ok )
             goto Fail;
 
           x += top[0];
@@ -1197,30 +1199,34 @@
         case op_hvcurveto:
           FT_TRACE4(( " hvcurveto" ));
 
-          if ( start_point( builder, x, y ) ||
-               check_points( builder, 3 )   )
+          if ( ( error = t1_builder_start_point( builder, x, y ) )
+                 != PSaux_Err_Ok                                   ||
+               ( error = t1_builder_check_points( builder, 3 ) )
+                 != PSaux_Err_Ok                                   )
             goto Fail;
 
           x += top[0];
-          add_point( builder, x, y, 0 );
+          t1_builder_add_point( builder, x, y, 0 );
           x += top[1];
           y += top[2];
-          add_point( builder, x, y, 0 );
+          t1_builder_add_point( builder, x, y, 0 );
           y += top[3];
-          add_point( builder, x, y, 1 );
+          t1_builder_add_point( builder, x, y, 1 );
           break;
 
         case op_rlineto:
           FT_TRACE4(( " rlineto" ));
 
-          if ( start_point( builder, x, y ) )
+          if ( ( error = t1_builder_start_point( builder, x, y ) )
+                 != PSaux_Err_Ok )
             goto Fail;
 
           x += top[0];
           y += top[1];
 
         Add_Line:
-          if ( add_point1( builder, x, y ) )
+          if ( ( error = t1_builder_add_point1( builder, x, y ) )
+                 != PSaux_Err_Ok )
             goto Fail;
           break;
 
@@ -1240,43 +1246,48 @@
         case op_rrcurveto:
           FT_TRACE4(( " rrcurveto" ));
 
-          if ( start_point( builder, x, y ) ||
-               check_points( builder, 3 )   )
+          if ( ( error = t1_builder_start_point( builder, x, y ) )
+                 != PSaux_Err_Ok                                   ||
+               ( error = t1_builder_check_points( builder, 3 ) )
+                 != PSaux_Err_Ok                                   )
             goto Fail;
 
           x += top[0];
           y += top[1];
-          add_point( builder, x, y, 0 );
+          t1_builder_add_point( builder, x, y, 0 );
 
           x += top[2];
           y += top[3];
-          add_point( builder, x, y, 0 );
+          t1_builder_add_point( builder, x, y, 0 );
 
           x += top[4];
           y += top[5];
-          add_point( builder, x, y, 1 );
+          t1_builder_add_point( builder, x, y, 1 );
           break;
 
         case op_vhcurveto:
           FT_TRACE4(( " vhcurveto" ));
 
-          if ( start_point( builder, x, y ) ||
-               check_points( builder, 3 )   )
+          if ( ( error = t1_builder_start_point( builder, x, y ) )
+                 != PSaux_Err_Ok                                   ||
+               ( error = t1_builder_check_points( builder, 3 ) )
+                 != PSaux_Err_Ok                                   )
             goto Fail;
 
           y += top[0];
-          add_point( builder, x, y, 0 );
+          t1_builder_add_point( builder, x, y, 0 );
           x += top[1];
           y += top[2];
-          add_point( builder, x, y, 0 );
+          t1_builder_add_point( builder, x, y, 0 );
           x += top[3];
-          add_point( builder, x, y, 1 );
+          t1_builder_add_point( builder, x, y, 1 );
           break;
 
         case op_vlineto:
           FT_TRACE4(( " vlineto" ));
 
-          if ( start_point( builder, x, y ) )
+          if ( ( error = t1_builder_start_point( builder, x, y ) )
+                 != PSaux_Err_Ok )
             goto Fail;
 
           y += top[0];
@@ -1453,12 +1464,20 @@
         case op_setcurrentpoint:
           FT_TRACE4(( " setcurrentpoint" ));
 
-          /* From the T1 specs, section 6.4:                        */
+          /* From the T1 specification, section 6.4:                */
           /*                                                        */
           /*   The setcurrentpoint command is used only in          */
           /*   conjunction with results from OtherSubrs procedures. */
 
-          /* known_othersubr_result_cnt != 0 is already handled above */
+          /* known_othersubr_result_cnt != 0 is already handled     */
+          /* above.                                                 */
+
+          /* Note, however, that both Ghostscript and Adobe         */
+          /* Distiller handle this situation by silently ignoring   */
+          /* the inappropriate `setcurrentpoint' instruction.  So   */
+          /* we do the same.                                        */
+#if 0
+
           if ( decoder->flex_state != 1 )
           {
             FT_ERROR(( "t1_decoder_parse_charstrings:"
@@ -1466,7 +1485,12 @@
             goto Syntax_Error;
           }
           else
-            decoder->flex_state = 0;
+            ...
+#endif
+
+          x = top[0];
+          y = top[1];
+          decoder->flex_state = 0;
           break;
 
         case op_unknown15:
