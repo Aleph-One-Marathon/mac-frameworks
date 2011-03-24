@@ -3,13 +3,13 @@ created following the guidelines in the "UPDATING" document.
 
 FREETYPE
 http://www.freetype.org/
-Release 2.3.11
-http://sourceforge.net/projects/freetype/files/freetype2/2.3.11/freetype-2.3.11.tar.bz2/download
+Release 2.4.4
+http://sourceforge.net/projects/freetype/files/freetype2/2.4.4/freetype-2.4.4.tar.bz2/download
 
 JPEG
 http://www.ijg.org/
-Release 7
-http://www.ijg.org/files/jpegsrc.v7.tar.gz
+Release 8c
+http://www.ijg.org/files/jpegsrc.v8c.tar.gz
 
 MAD
 http://www.underbit.com/products/mad/
@@ -21,8 +21,8 @@ Note: mad sets some preprocessor macros on a per-arch basis;
 
 PNG
 http://www.libpng.org/
-Release 1.2.40
-http://prdownloads.sourceforge.net/libpng/libpng-1.2.40.tar.gz?download
+Release 1.2.44
+http://prdownloads.sourceforge.net/libpng/libpng-1.2.44.tar.gz?download
 
 SNDFILE
 http://www.mega-nerd.com/libsndfile/
