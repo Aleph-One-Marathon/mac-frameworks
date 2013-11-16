@@ -1,10 +1,50 @@
-Xcode projects are included for the following libraries. The projects were
-created following the guidelines in the "UPDATING" document.
+Frameworks in Aleph One are built in three ways:
+
+1. Scripted builds + lipo used to assemble frameworks
+2. Xcode project created by Aleph One developers [deprecated]
+3. Xcode project supplied by upstream
+
+Some of the frameworks listed here are no longer included with Aleph One.
+The code and projects/scripts remain in case they are useful to others.
+
+-----
+
+The following projects use the "scripted build + lipo" method. See the
+"build.sh" file inside each project for details.
+
+Note that the FFmpeg dependencies (ogg, vorbis, vpx) are built as static
+libraries. They must be installed before building ffmpeg, and do not need
+to be packaged into Aleph One itself.
 
 FFMPEG
 http://www.ffmpeg.org/
 Release 0.10.7
 http://www.ffmpeg.org/releases/ffmpeg-0.10.7.tar.bz2
+
+OGG
+http://www.xiph.org/
+Release 1.3.1
+http://downloads.xiph.org/releases/ogg/libogg-1.3.1.tar.gz
+
+VORBIS
+http://www.xiph.org/
+Release 1.3.3
+http://downloads.xiph.org/releases/vorbis/libvorbis-1.3.3.tar.gz
+
+VPX
+http://www.webmproject.org/
+Release 1.2.0
+http://webm.googlecode.com/files/libvpx-v1.2.0.tar.bz2
+
+X264
+http://www.videolan.org/developers/x264.html
+2013-06-22 stable snapshot
+ftp://ftp.videolan.org/pub/videolan/x264/snapshots//x264-snapshot-20130622-2245-stable.tar.bz2
+
+-----
+
+Xcode projects are included for the following libraries. The projects were
+created following the guidelines in the "UPDATING" document.
 
 FREETYPE
 http://www.freetype.org/
@@ -39,11 +79,6 @@ http://www.speex.org/
 Release 1.2rc1
 http://downloads.xiph.org/releases/speex/speex-1.2rc1.tar.gz
 
-X264
-http://www.videolan.org/developers/x264.html
-2013-06-22 stable snapshot
-ftp://ftp.videolan.org/pub/videolan/x264/snapshots//x264-snapshot-20130622-2245-stable.tar.bz2
-
 ZZIPLIB
 http://zziplib.sourceforge.net/
 Release 0.13.58
@@ -56,27 +91,6 @@ Note: because of zziplib's unusual header usage, the Xcode project
 
 Aleph One also uses the following libraries, which provide an official
 framework binary or Xcode project file:
-
-OGG
-http://www.xiph.org/ogg/
-Release 1.1.4
-http://downloads.xiph.org/releases/ogg/libogg-1.1.4.tar.gz
-
-Xcode project file is located in macosx/Ogg.xcodeproj
-Build configuration "Release"
-
-Note: Change "Architectures" to "Standard (32/64-bit Universal)"
-      Change "Installation Directory" to "@executable_path/../Frameworks"
-      Add the following user-defined settings:
-        GCC_VERSION_i386 = 4.0
-        GCC_VERSION_ppc = 4.0
-        GCC_VERSION_x86_64 = 4.2
-        MACOSX_DEPLOYMENT_TARGET_i386 = 10.4
-        MACOSX_DEPLOYMENT_TARGET_ppc = 10.4
-        MACOSX_DEPLOYMENT_TARGET_x86_64 = 10.6
-        SDKROOT_i386 = macosx10.4
-        SDKROOT_ppc = macosx10.4
-        SDKROOT_x86_64 = macosx10.6
 
 SDL
 http://www.libsdl.org/
@@ -135,31 +149,3 @@ Note: Remove "Other Linker Flags"
       Remove "Library Search Paths"
       Add freetype.framework to Frameworks section
       
-SMPEG
-http://icculus.org/smpeg/
-Revision 389 of SVN trunk
-svn://svn.icculus.org/smpeg/trunk
-
-Xcode project file is inside Xcode.tar.gz
-Build configuration "Release"
-
-VORBIS
-http://www.vorbis.com/
-Release 1.2.3
-http://downloads.xiph.org/releases/vorbis/libvorbis-1.2.3.tar.gz
-
-Xcode project file is located in macosx/Vorbis.xcodeproj
-Build configuration "Release"
-
-Note: Change "Architectures" to "Standard (32/64-bit Universal)"
-      Change "Installation Directory" to "@executable_path/../Frameworks"
-      Add the following user-defined settings:
-        GCC_VERSION_i386 = 4.0
-        GCC_VERSION_ppc = 4.0
-        GCC_VERSION_x86_64 = 4.2
-        MACOSX_DEPLOYMENT_TARGET_i386 = 10.4
-        MACOSX_DEPLOYMENT_TARGET_ppc = 10.4
-        MACOSX_DEPLOYMENT_TARGET_x86_64 = 10.6
-        SDKROOT_i386 = macosx10.4
-        SDKROOT_ppc = macosx10.4
-        SDKROOT_x86_64 = macosx10.6

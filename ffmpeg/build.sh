@@ -1,7 +1,8 @@
 #!/bin/bash
 
-# Change this to the directory where x264.framework lives
-X264DIR="/Library/Frameworks"
+# Change this to the directory where our dependent frameworks live
+DEPFWKDIR="/Library/Frameworks"
+
 DEV="/Developer-3.2.6"
 # Note: yasm must be installed; add its directory to STOCKPATH if needed
 STOCKPATH="$DEV/usr/bin:/usr/bin:/bin"
@@ -9,11 +10,11 @@ SRCDIR="$PWD/src"
 COMPILEDIR="$PWD/objs"
 INSTALLDIR="$PWD/installs"
 FWKDIR="$PWD"
-CONFIGOPTS="--disable-static --enable-shared --enable-gpl --enable-libx264 --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-ffserver --disable-avdevice --disable-swresample --disable-postproc --disable-avfilter --disable-everything"
-CONFIGOPTS+=" --enable-muxer=mp4 --enable-encoder=aac --enable-encoder=libx264"
+CONFIGOPTS="--disable-static --enable-shared --enable-gpl --enable-libvorbis --enable-libvpx --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-ffserver --disable-avdevice --disable-swresample --disable-postproc --disable-avfilter --disable-everything"
+CONFIGOPTS+=" --enable-muxer=webm --enable-encoder=libvorbis --enable-encoder=libvpx"
 CONFIGOPTS+=" --enable-demuxer=aiff --enable-demuxer=mp3 --enable-demuxer=mpegps --enable-demuxer=mpegts --enable-demuxer=mpegtsraw --enable-demuxer=mpegvideo --enable-demuxer=ogg --enable-demuxer=wav"
 CONFIGOPTS+=" --enable-parser=mpegaudio --enable-parser=mpegvideo"
-CONFIGOPTS+=" --enable-decoder=adpcm_ima_wav --enable-decoder=adpcm_ms --enable-decoder=gsm --enable-decoder=gsm_ms --enable-decoder=mp1 --enable-decoder=mp1float --enable-decoder=mp2 --enable-decoder=mp2float --enable-decoder=mp3 --enable-decoder=mp3float --enable-decoder=mpeg1video --enable-decoder=pcm_alaw --enable-decoder=pcm_f32be --enable-decoder=pcm_f32le --enable-decoder=pcm_f64be --enable-decoder=pcm_f64le --enable-decoder=pcm_mulaw --enable-decoder=pcm_s8 --enable-decoder=pcm_s8_planar --enable-decoder=pcm_s16be --enable-decoder=pcm_s16le --enable-decoder=pcm_s16le_planar --enable-decoder=pcm_s24be --enable-decoder=pcm_s24le --enable-decoder=pcm_s32be --enable-decoder=pcm_s32le --enable-decoder=pcm_u8 --enable-decoder=theora --enable-decoder=vorbis"
+CONFIGOPTS+=" --enable-decoder=adpcm_ima_wav --enable-decoder=adpcm_ms --enable-decoder=gsm --enable-decoder=gsm_ms --enable-decoder=mp1 --enable-decoder=mp1float --enable-decoder=mp2 --enable-decoder=mp2float --enable-decoder=mp3 --enable-decoder=mp3float --enable-decoder=mpeg1video --enable-decoder=pcm_alaw --enable-decoder=pcm_f32be --enable-decoder=pcm_f32le --enable-decoder=pcm_f64be --enable-decoder=pcm_f64le --enable-decoder=pcm_mulaw --enable-decoder=pcm_s8 --enable-decoder=pcm_s8_planar --enable-decoder=pcm_s16be --enable-decoder=pcm_s16le --enable-decoder=pcm_s16le_planar --enable-decoder=pcm_s24be --enable-decoder=pcm_s24le --enable-decoder=pcm_s32be --enable-decoder=pcm_s32le --enable-decoder=pcm_u8 --enable-decoder=theora --enable-decoder=vorbis --enable-decoder=vp8"
 CONFIGOPTS+=" --enable-protocol=file"
 FWKS=(libavcodec libavformat libavutil libswscale)
 
@@ -21,11 +22,15 @@ FWKS=(libavcodec libavformat libavutil libswscale)
 if [ -d "$COMPILEDIR" ]; then rm -r "$COMPILEDIR"; fi
 if [ -d "$INSTALLDIR" ]; then rm -r "$INSTALLDIR"; fi
 
-# jump through hoops to make x264 dependency work
+# jump through hoops to make framework dependency work
 DEPDIR="$COMPILEDIR/deps"
 mkdir -p "$DEPDIR/lib"
-cp "$X264DIR/x264.framework/x264" "$DEPDIR/lib/libx264.dylib"
-ln -s "$X264DIR/x264.framework/Headers" "$DEPDIR/include"
+mkdir -p "$DEPDIR/include"
+STATICDEPS=(ogg vorbis vorbisenc vorbisfile vpx)
+for lib in "${STATICDEPS[@]}"; do
+  cp "$DEPFWKDIR/$lib.framework/$lib.a" "$DEPDIR/lib/lib$lib.a"
+  cp -R "$DEPFWKDIR/$lib.framework/Headers/" "$DEPDIR/include"
+done
 
 # ppc build
 IDIR="$INSTALLDIR/ppc"

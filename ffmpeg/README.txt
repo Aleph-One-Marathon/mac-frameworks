@@ -39,8 +39,9 @@ vorbis
 # MPEG-1 video format -- replacing smpeg
 mpeg1video
 
-# Ogg/Theora video format -- new support
+# Ogg/Theora and WebM video format -- new support
 theora
+vp8
 
 PARSERS:
 # these might be needed for MPEG support
@@ -58,8 +59,8 @@ ogg
 wav
 
 ENCODERS:
-aac
-libx264
+libvpx
+libvorbis
 
 MUXERS:
-mp4
+webm

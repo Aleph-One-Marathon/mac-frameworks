@@ -1,4 +1,4 @@
-*** Update 2013-06-23: the new frameworks (ffmpeg and x264) were built
+*** Update 2013-06-23: newer frameworks for Aleph One are built
     using a different procedure, based on the upstream configure and
     make process. See the "build.sh" scripts for more info.
 
