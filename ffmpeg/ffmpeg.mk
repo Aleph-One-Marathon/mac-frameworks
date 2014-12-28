@@ -2,7 +2,8 @@
 
 PKG             := ffmpeg
 $(PKG)_IGNORE   :=
-$(PKG)_CHECKSUM := 743f44a71f93b14c9b26ca2424b0da8457cef4be
+$(PKG)_VERSION  := 1.2.7
+$(PKG)_CHECKSUM := ff49a6b28e174f9f8072638d8251e1e447666ef6
 $(PKG)_SUBDIR   := $(PKG)-$($(PKG)_VERSION)
 $(PKG)_FILE     := $(PKG)-$($(PKG)_VERSION).tar.bz2
 $(PKG)_URL      := http://www.ffmpeg.org/releases/$($(PKG)_FILE)
@@ -10,16 +11,17 @@ $(PKG)_URL_2    := http://launchpad.net/ffmpeg/main/$($(PKG)_VERSION)/+download/
 $(PKG)_DEPS     := gcc bzip2 libvpx ogg sdl speex vorbis zlib
 
 define $(PKG)_UPDATE
-    wget -q -O- 'http://www.ffmpeg.org/download.html' | \
+    $(WGET) -q -O- 'http://www.ffmpeg.org/download.html' | \
     $(SED) -n 's,.*ffmpeg-\([0-9][^>]*\)\.tar.*,\1,p' | \
     head -1
 endef
 
 define $(PKG)_BUILD
+    '$(SED)' -i "s^[-]lvpx^`'$(TARGET)'-pkg-config --libs-only-l vpx`^g;" $(1)/configure
     cd '$(1)' && ./configure \
         --cross-prefix='$(TARGET)'- \
         --enable-cross-compile \
-        --arch=i686 \
+        --arch=$(patsubst -%,,$(TARGET)) \
         --target-os=mingw32 \
         --prefix='$(PREFIX)/$(TARGET)' \
         --disable-shared \
@@ -37,7 +39,7 @@ define $(PKG)_BUILD
         --disable-everything \
         --enable-muxer=webm \
         --enable-encoder=libvorbis \
-        --enable-encoder=libvpx \
+        --enable-encoder=libvpx_vp8 \
         --enable-demuxer=aiff \
         --enable-demuxer=mp3 \
         --enable-demuxer=mpegps \
