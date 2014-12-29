@@ -20,6 +20,7 @@ FWKS=(libavcodec libavformat libavutil libswscale)
 
 
 # unpack source
+if [ -d "$SRCDIR" ]; then rm -r "$SRCDIR"; fi
 tar xjf ffmpeg-1.2.7.tar.bz2
 mv "ffmpeg-1.2.7" "$SRCDIR"
 
@@ -104,6 +105,7 @@ make install
 
 # Done with compiling
 rm -r "$COMPILEDIR"
+rm -r "$SRCDIR"
 
 # Update shared-library paths 
 for arch in ppc i386 x86_64; do
