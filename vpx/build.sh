@@ -2,13 +2,19 @@
 
 DEV="/Developer-3.2.6"
 # Note: GNU grep must be installed; add its directory to STOCKPATH if needed
-STOCKPATH="/usr/local2/bin:$DEV/usr/bin:/usr/bin:/bin"
+STOCKPATH="/opt/local2/bin:$DEV/usr/bin:/usr/bin:/bin"
 SRCDIR="$PWD/src"
 COMPILEDIR="$PWD/objs"
 INSTALLDIR="$PWD/installs"
 FWKDIR="$PWD"
 CONFIGOPTS="--disable-examples --disable-unit-tests"
 FWKS=(vpx)
+
+
+# unpack source
+if [ -d "$SRCDIR" ]; then rm -r "$SRCDIR"; fi
+tar xjf libvpx-v1.1.0.tar.bz2
+mv "libvpx-v1.1.0" "$SRCDIR"
 
 if [ -d "$COMPILEDIR" ]; then rm -r "$COMPILEDIR"; fi
 if [ -d "$INSTALLDIR" ]; then rm -r "$INSTALLDIR"; fi
@@ -78,6 +84,7 @@ make install
 
 # Done with compiling
 rm -r "$COMPILEDIR"
+rm -r "$SRCDIR"
 
 # Set up static "framework", because vpx is awful :C
 for lib in "${FWKS[@]}"; do

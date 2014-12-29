@@ -1,30 +1,47 @@
-Frameworks in Aleph One are built in three ways:
+Frameworks in Aleph One are built in two ways:
 
 1. Scripted builds + lipo used to assemble frameworks
-2. Xcode project created by Aleph One developers [deprecated]
-3. Xcode project supplied by upstream
-
-Some of the frameworks listed here are no longer included with Aleph One.
-The code and projects/scripts remain in case they are useful to others.
+2. Xcode project supplied by upstream
 
 -----
 
 The following projects use the "scripted build + lipo" method. See the
-"build.sh" file inside each project for details.
+"build.sh" file inside each project for details, and the UPDATING file for
+additional tips when creating or updating frameworks.
 
 Note that the FFmpeg dependencies (ogg, vorbis, vpx) are built as static
 libraries. They must be installed before building ffmpeg, and do not need
 to be packaged into Aleph One itself.
 
-FFMPEG
+FFMPEG (avcodec, avformat, avutil, swscale)
 http://www.ffmpeg.org/
-Release 0.10.7
-http://www.ffmpeg.org/releases/ffmpeg-0.10.7.tar.bz2
+Release 1.2.7
+http://www.ffmpeg.org/releases/ffmpeg-1.2.7.tar.bz2
+
+FREETYPE
+http://www.freetype.org/
+Release 2.5.0.1
+http://download.savannah.gnu.org/releases/freetype/freetype-2.5.0.1.tar.bz2
+
+JPEG
+http://www.ijg.org/
+Release 9
+http://www.ijg.org/files/jpegsrc.v9.tar.gz
 
 OGG
 http://www.xiph.org/
 Release 1.3.1
 http://downloads.xiph.org/releases/ogg/libogg-1.3.1.tar.gz
+
+PNG
+http://www.libpng.org/
+Release 1.6.1
+http://sourceforge.net/projects/libpng/files/libpng16/older-releases/1.6.1/libpng-1.6.1.tar.gz/download
+
+SPEEX (speex, speexdsp)
+http://www.speex.org/
+Release 1.2rc1
+http://downloads.xiph.org/releases/speex/speex-1.2rc1.tar.gz
 
 VORBIS
 http://www.xiph.org/
@@ -33,59 +50,13 @@ http://downloads.xiph.org/releases/vorbis/libvorbis-1.3.3.tar.gz
 
 VPX
 http://www.webmproject.org/
-Release 1.2.0
-http://webm.googlecode.com/files/libvpx-v1.2.0.tar.bz2
-
-X264
-http://www.videolan.org/developers/x264.html
-2013-06-22 stable snapshot
-ftp://ftp.videolan.org/pub/videolan/x264/snapshots//x264-snapshot-20130622-2245-stable.tar.bz2
-
------
-
-Xcode projects are included for the following libraries. The projects were
-created following the guidelines in the "UPDATING" document.
-
-FREETYPE
-http://www.freetype.org/
-Release 2.4.12
-http://sourceforge.net/projects/freetype/files/freetype2/2.4.12/freetype-2.4.12.tar.bz2/download
-
-JPEG
-http://www.ijg.org/
-Release 8c
-http://www.ijg.org/files/jpegsrc.v8c.tar.gz
-
-MAD
-http://www.underbit.com/products/mad/
-Release 0.15.1b
-http://sourceforge.net/projects/mad/files/libmad/0.15.1b/libmad-0.15.1b.tar.gz/download
-
-Note: mad sets some preprocessor macros on a per-arch basis;
-      build_config.sh was modified to write them into config.h.
-
-PNG
-http://www.libpng.org/
-Release 1.2.44
-http://prdownloads.sourceforge.net/libpng/libpng-1.2.44.tar.gz?download
-
-SNDFILE
-http://www.mega-nerd.com/libsndfile/
-Release 1.0.20
-http://www.mega-nerd.com/libsndfile/libsndfile-1.0.20.tar.gz
-
-SPEEX
-http://www.speex.org/
-Release 1.2rc1
-http://downloads.xiph.org/releases/speex/speex-1.2rc1.tar.gz
+Release 1.1.0
+http://webm.googlecode.com/files/libvpx-v1.1.0.tar.bz2
 
 ZZIPLIB
 http://zziplib.sourceforge.net/
-Release 0.13.58
-http://sourceforge.net/projects/zziplib/files/zziplib13/0.13.58/zziplib-0.13.58.tar.bz2/download
-
-Note: because of zziplib's unusual header usage, the Xcode project
-      needed several tweaks.
+Release 0.13.59
+http://sourceforge.net/projects/zziplib/files/zziplib13/0.13.59/zziplib-0.13.59.tar.bz2/download
 
 -----
 

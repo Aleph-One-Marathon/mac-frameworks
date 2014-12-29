@@ -1,34 +1,23 @@
 #!/bin/bash
 
-# Change this to the directory where our dependent frameworks live
-DEPFWKDIR="/Library/Frameworks"
-
 DEV="/Developer-3.2.6"
+# Note: yasm must be installed; add its directory to STOCKPATH if needed
 STOCKPATH="$DEV/usr/bin:/usr/bin:/bin"
 SRCDIR="$PWD/src"
 COMPILEDIR="$PWD/objs"
 INSTALLDIR="$PWD/installs"
 FWKDIR="$PWD"
-CONFIGOPTS="--disable-shared --disable-oggtest"
-FWKS=(vorbis vorbisenc vorbisfile)
+CONFIGOPTS="--disable-static"
+FWKS=(libpng)
 
 
 # unpack source
 if [ -d "$SRCDIR" ]; then rm -r "$SRCDIR"; fi
-tar xzf libvorbis-1.3.3.tar.gz
-mv "libvorbis-1.3.3" "$SRCDIR"
+tar xzf libpng-1.6.1.tar.gz
+mv "libpng-1.6.1" "$SRCDIR"
 
 if [ -d "$COMPILEDIR" ]; then rm -r "$COMPILEDIR"; fi
 if [ -d "$INSTALLDIR" ]; then rm -r "$INSTALLDIR"; fi
-
-# jump through hoops to make framework dependency work
-DEPDIR="$COMPILEDIR/deps"
-mkdir -p "$DEPDIR/lib"
-mkdir -p "$DEPDIR/include"
-cp "$DEPFWKDIR/ogg.framework/ogg.a" "$DEPDIR/lib/libogg.a"
-cp -R "$DEPFWKDIR/ogg.framework/Headers/" "$DEPDIR/include"
-
-CONFIGOPTS+=" --with-ogg-libraries=$DEPDIR/lib --with-ogg-includes=$DEPDIR/include"
 
 # ppc build
 IDIR="$INSTALLDIR/ppc"
@@ -49,7 +38,6 @@ env \
   LDFLAGS="$FLAGS" \
   "$SRCDIR/configure" --prefix="$IDIR" $CONFIGOPTS \
   --host="powerpc-apple-darwin8"
-
 make
 make install
 
@@ -68,8 +56,8 @@ env \
   CC="$DEV/usr/bin/gcc-4.0" \
   CPP="$DEV/usr/bin/gcc-4.0 -E" \
   LD="$DEV/usr/bin/g++-4.0" \
-  CFLAGS="$FLAGS -I\"$DEPDIR/include\"" \
-  LDFLAGS="$FLAGS -L\"$DEPDIR/lib\"" \
+  CFLAGS="$FLAGS" \
+  LDFLAGS="$FLAGS" \
   "$SRCDIR/configure" --prefix="$IDIR" $CONFIGOPTS \
   --host="i386-apple-darwin8"
 make
@@ -90,8 +78,8 @@ env \
   CC="$DEV/usr/bin/gcc-4.2" \
   CPP="$DEV/usr/bin/gcc-4.2 -E" \
   LD="$DEV/usr/bin/g++-4.2" \
-  CFLAGS="$FLAGS -I\"$DEPDIR/include\"" \
-  LDFLAGS="$FLAGS -L\"$DEPDIR/lib\"" \
+  CFLAGS="$FLAGS" \
+  LDFLAGS="$FLAGS" \
   "$SRCDIR/configure" --prefix="$IDIR" $CONFIGOPTS \
   --host="x86_64-apple-darwin10"
 make
@@ -101,7 +89,22 @@ make install
 rm -r "$COMPILEDIR"
 rm -r "$SRCDIR"
 
-# Set up static "frameworks"
+# Update shared-library paths 
+for arch in ppc i386 x86_64; do
+  LIBDIR="$INSTALLDIR/$arch/lib"
+  for lib in "${FWKS[@]}"; do
+    lname=${lib#lib}
+    install_name_tool -id "@executable_path/../Frameworks/$lname.framework/Versions/A/$lname" "$LIBDIR/$lib.dylib"
+    
+    # fix links to sibling libraries
+    for elib in "${FWKS[@]}"; do
+      ename=${elib#lib}
+      install_name_tool -change "$LIBDIR/$elib.dylib" "@executable_path/../Frameworks/$ename.framework/Versions/A/$ename" "$LIBDIR/$lib.dylib"
+    done
+  done
+done
+
+# Set up frameworks
 for lib in "${FWKS[@]}"; do
   # set up directory structure
   lname=${lib#lib}
@@ -116,33 +119,21 @@ for lib in "${FWKS[@]}"; do
   cd "$FDIR"
   ln -s Versions/Current/Headers
   ln -s Versions/Current/Resources
-  ln -s Versions/Current/lib$lname.a $lname.a
+  ln -s Versions/Current/$lname
   
   # create universal binary
   lipo \
-    "$INSTALLDIR/ppc/lib/lib$lib.a" \
-    "$INSTALLDIR/i386/lib/lib$lib.a" \
-    "$INSTALLDIR/x86_64/lib/lib$lib.a" \
-    -create -o "$FDIR/Versions/A/lib$lname.a"
+    "$INSTALLDIR/ppc/lib/$lib.dylib" \
+    "$INSTALLDIR/i386/lib/$lib.dylib" \
+    "$INSTALLDIR/x86_64/lib/$lib.dylib" \
+    -create -o "$FDIR/Versions/A/$lname"
   
   # merge headers
-  HNAME="$FDIR/Versions/A/Headers"
+  # libpng uses symlinks in its install, so this is a little different
+  HNAME="$FDIR/Headers"
+  mkdir -p "$HNAME"
   cd "$INSTALLDIR/i386/include"
-  
-  hfiles=()
-  case "$lname" in
-  vorbis)
-    hfiles=(vorbis/codec.h)
-    ;;
-  vorbisenc)
-    hfiles=(vorbis/vorbisenc.h)
-    ;;
-  vorbisfile)
-    hfiles=(vorbis/vorbisfile.h)
-    ;;
-  esac
-  for hfile in "${hfiles[@]}"; do
-    mkdir -p "$HNAME"/`dirname $hfile`
+  for hfile in `find libpng16 -type f`; do
     
     diff -q $hfile "$INSTALLDIR/ppc/include/$hfile" > /dev/null
     pdif=$?
@@ -159,11 +150,12 @@ for lib in "${FWKS[@]}"; do
       cat "$INSTALLDIR/x86_64/include/$hfile" >> "$HNAME/$hfile"
       echo "#endif" >> "$HNAME/$hfile"
     else
-      cp $hfile "$HNAME/$hfile"
+      cp $hfile "$HNAME"/`basename $hfile`
     fi      
   done
     
 done
+
 
 # done with installdir
 rm -r "$INSTALLDIR"

@@ -9,6 +9,12 @@ FWKDIR="$PWD"
 CONFIGOPTS="--disable-shared"
 FWKS=(ogg)
 
+
+# unpack source
+if [ -d "$SRCDIR" ]; then rm -r "$SRCDIR"; fi
+tar xzf libogg-1.3.1.tar.gz
+mv "libogg-1.3.1" "$SRCDIR"
+
 if [ -d "$COMPILEDIR" ]; then rm -r "$COMPILEDIR"; fi
 if [ -d "$INSTALLDIR" ]; then rm -r "$INSTALLDIR"; fi
 
@@ -81,6 +87,7 @@ make install
 
 # Done with compiling
 rm -r "$COMPILEDIR"
+rm -r "$SRCDIR"
 
 # Set up static "frameworks"
 for lib in "${FWKS[@]}"; do
