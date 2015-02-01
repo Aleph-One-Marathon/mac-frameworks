@@ -7,8 +7,10 @@ SRCDIR="$PWD/src"
 COMPILEDIR="$PWD/objs"
 INSTALLDIR="$PWD/installs"
 FWKDIR="$PWD"
+PLIST_TEMPLATE="$PWD/../Info-template.plist"
 CONFIGOPTS="--disable-examples --disable-unit-tests"
 FWKS=(vpx)
+FWK_VERSION="1.1.0"
 
 
 # unpack source
@@ -109,6 +111,11 @@ for lib in "${FWKS[@]}"; do
     "$INSTALLDIR/i386/lib/lib$lib.a" \
     "$INSTALLDIR/x86_64/lib/lib$lib.a" \
     -create -o "$FDIR/Versions/A/lib$lname.a"
+  
+  # create Info.plist
+  cp "$PLIST_TEMPLATE" "$FDIR/Resources/Info.plist"
+  sed -i '' -e s/\$FRAMEWORK_NAME/$lname/g "$FDIR/Resources/Info.plist"
+  sed -i '' -e s/\$FRAMEWORK_VERSION/$FWK_VERSION/g "$FDIR/Resources/Info.plist"
   
   # merge headers
   HNAME="$FDIR/Versions/A/Headers"

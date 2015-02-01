@@ -10,6 +10,7 @@ SRCDIR="$PWD/src"
 COMPILEDIR="$PWD/objs"
 INSTALLDIR="$PWD/installs"
 FWKDIR="$PWD"
+PLIST_TEMPLATE="$PWD/../Info-template.plist"
 CONFIGOPTS="--disable-static --enable-shared --enable-gpl --enable-libvorbis --enable-libvpx --disable-doc --disable-ffmpeg --disable-ffplay --disable-ffprobe --disable-ffserver --disable-avdevice --disable-swresample --disable-postproc --disable-avfilter --disable-everything"
 CONFIGOPTS+=" --enable-muxer=webm --enable-encoder=libvorbis --enable-encoder=libvpx_vp8"
 CONFIGOPTS+=" --enable-demuxer=aiff --enable-demuxer=mp3 --enable-demuxer=mpegps --enable-demuxer=mpegts --enable-demuxer=mpegtsraw --enable-demuxer=mpegvideo --enable-demuxer=ogg --enable-demuxer=wav"
@@ -17,6 +18,7 @@ CONFIGOPTS+=" --enable-parser=mpegaudio --enable-parser=mpegvideo"
 CONFIGOPTS+=" --enable-decoder=adpcm_ima_wav --enable-decoder=adpcm_ms --enable-decoder=gsm --enable-decoder=gsm_ms --enable-decoder=mp1 --enable-decoder=mp1float --enable-decoder=mp2 --enable-decoder=mp2float --enable-decoder=mp3 --enable-decoder=mp3float --enable-decoder=mpeg1video --enable-decoder=pcm_alaw --enable-decoder=pcm_f32be --enable-decoder=pcm_f32le --enable-decoder=pcm_f64be --enable-decoder=pcm_f64le --enable-decoder=pcm_mulaw --enable-decoder=pcm_s8 --enable-decoder=pcm_s8_planar --enable-decoder=pcm_s16be --enable-decoder=pcm_s16le --enable-decoder=pcm_s16le_planar --enable-decoder=pcm_s24be --enable-decoder=pcm_s24le --enable-decoder=pcm_s32be --enable-decoder=pcm_s32le --enable-decoder=pcm_u8 --enable-decoder=theora --enable-decoder=vorbis --enable-decoder=vp8"
 CONFIGOPTS+=" --enable-protocol=file"
 FWKS=(libavcodec libavformat libavutil libswscale)
+FWK_VERSION="1.2.7"
 
 
 # unpack source
@@ -149,6 +151,11 @@ for lib in "${FWKS[@]}"; do
     "$INSTALLDIR/i386/lib/$lib.dylib" \
     "$INSTALLDIR/x86_64/lib/$lib.dylib" \
     -create -o "$FDIR/Versions/A/$lname"
+  
+  # create Info.plist
+  cp "$PLIST_TEMPLATE" "$FDIR/Resources/Info.plist"
+  sed -i '' -e s/\$FRAMEWORK_NAME/$lname/g "$FDIR/Resources/Info.plist"
+  sed -i '' -e s/\$FRAMEWORK_VERSION/$FWK_VERSION/g "$FDIR/Resources/Info.plist"
   
   # merge headers
   HNAME="$FDIR/Headers"

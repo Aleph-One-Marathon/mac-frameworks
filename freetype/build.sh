@@ -7,8 +7,10 @@ SRCDIR="$PWD/src"
 COMPILEDIR="$PWD/objs"
 INSTALLDIR="$PWD/installs"
 FWKDIR="$PWD"
+PLIST_TEMPLATE="$PWD/../Info-template.plist"
 CONFIGOPTS="--disable-static --without-png"
 FWKS=(libfreetype)
+FWK_VERSION="2.5.0.1"
 
 
 # unpack source
@@ -127,6 +129,11 @@ for lib in "${FWKS[@]}"; do
     "$INSTALLDIR/i386/lib/$lib.dylib" \
     "$INSTALLDIR/x86_64/lib/$lib.dylib" \
     -create -o "$FDIR/Versions/A/$lname"
+  
+  # create Info.plist
+  cp "$PLIST_TEMPLATE" "$FDIR/Resources/Info.plist"
+  sed -i '' -e s/\$FRAMEWORK_NAME/$lname/g "$FDIR/Resources/Info.plist"
+  sed -i '' -e s/\$FRAMEWORK_VERSION/$FWK_VERSION/g "$FDIR/Resources/Info.plist"
   
   # merge headers
   HNAME="$FDIR/Headers"
