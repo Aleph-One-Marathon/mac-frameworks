@@ -13,6 +13,13 @@ Note that the FFmpeg dependencies (ogg, vorbis, vpx) are built as static
 libraries. They must be installed before building ffmpeg, and do not need
 to be packaged into Aleph One itself.
 
+Note that "boost.framework" contains headers only, and does not need to be packaged into Aleph One itself.
+
+BOOST (boost, boost_filesystem, boost_system)
+http://www.boost.org/
+Release 1.53.0
+http://sourceforge.net/projects/boost/files/boost/1.53.0/boost_1_53_0.tar.bz2/download
+
 FFMPEG (avcodec, avformat, avutil, swscale)
 http://www.ffmpeg.org/
 Release 1.2.7
