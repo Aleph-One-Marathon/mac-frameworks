@@ -20,6 +20,11 @@ http://www.boost.org/
 Release 1.53.0
 http://sourceforge.net/projects/boost/files/boost/1.53.0/boost_1_53_0.tar.bz2/download
 
+EXPAT
+http://expat.sourceforge.net/
+Release 2.1.0
+http://sourceforge.net/projects/expat/files/expat/2.1.0/expat-2.1.0.tar.gz/download
+
 FFMPEG (avcodec, avformat, avutil, swscale)
 http://www.ffmpeg.org/
 Release 1.2.7
