@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 DEV="$(xcode-select -p)"
 # Note: yasm must be installed; add its directory to STOCKPATH if needed
 STOCKPATH="$DEV/usr/bin:/usr/bin:/bin"
