@@ -10,13 +10,13 @@ FWKDIR="$PWD"
 PLIST_TEMPLATE="$PWD/../Info-template.plist"
 CONFIGOPTS="--disable-static --without-png"
 FWKS=(libexpat)
-FWK_VERSION="2.1.0"
+FWK_VERSION="2.1.1"
 
 
 # unpack source
 if [ -d "$SRCDIR" ]; then rm -r "$SRCDIR"; fi
-tar xzf expat-2.1.0.tar.gz
-mv "expat-2.1.0" "$SRCDIR"
+tar xzf expat-$FWK_VERSION.tar.bz2
+mv "expat-$FWK_VERSION" "$SRCDIR"
 
 if [ -d "$COMPILEDIR" ]; then rm -r "$COMPILEDIR"; fi
 if [ -d "$INSTALLDIR" ]; then rm -r "$INSTALLDIR"; fi
