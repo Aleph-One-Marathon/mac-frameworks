@@ -29,14 +29,15 @@ CDIR="$COMPILEDIR/x86_64"
 mkdir -p "$CDIR"
 cd "$CDIR"
 
-SDK="$DEV/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.6.sdk"
+SDK_VERSION="10.11"
+SDK="$DEV/Platforms/MacOSX.platform/Developer/SDKs/MacOSX$SDK_VERSION.sdk"
 export PATH="$SDK/usr/bin:$STOCKPATH"
-FLAGS="-arch x86_64 -mmacosx-version-min=10.6 -isysroot $SDK"
+FLAGS="-arch x86_64 -mmacosx-version-min=$SDK_VERSION -isysroot $SDK"
 
 env \
-  CC="$DEV/usr/bin/gcc-4.2" \
-  CPP="$DEV/usr/bin/gcc-4.2 -E" \
-  LD="$DEV/usr/bin/g++-4.2" \
+  CC="$DEV/usr/bin/gcc" \
+  CPP="$DEV/usr/bin/gcc -E" \
+  LD="$DEV/usr/bin/g++" \
   CFLAGS="$FLAGS" \
   LDFLAGS="$FLAGS" \
   "$SRCDIR/configure" --prefix="$IDIR" $CONFIGOPTS \
