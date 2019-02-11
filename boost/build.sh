@@ -1,7 +1,7 @@
 #!/bin/bash -l
 
 export PROJ="boost"
-export VERSION="1.67.0"
+export VERSION="1.69.0"
 export VERSIONDL="${VERSION//./_}"
 export URL="https://dl.bintray.com/boostorg/release/$VERSION/source/boost_$VERSIONDL.tar.bz2"
 export DIRNAME="${PROJ}_${VERSIONDL}"
