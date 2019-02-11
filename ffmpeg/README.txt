@@ -1,4 +1,6 @@
-For support reasons, only specific codecs are enabled in FFmpeg. When updating the list, also update the "ffmpeg.mk" file in this directory -- that file defines the options to use in the MXE Windows cross-compile.
+FFmpeg compilation requires pkg-config and Glib. The build script assumes the necessary components are installed in /usr/local/bin.
+
+For support reasons, only specific codecs are enabled in FFmpeg. When updating the list, also update the "ffmpeg.mk" file used in the MXE Windows cross-compile.
 
 The following formats are enabled for Aleph One:
 

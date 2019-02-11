@@ -1,7 +1,0 @@
-For the most part, the "build.sh" scripts speak for themselves. When adding a framework, jpeg is a good standard script to start from.
-
-The most obvious change is to the "unpack source" section in build.sh. You may also need to update CONFIGOPTS, or FWKS if new dynamic libraries are added.
-
-If frameworks depend on one another, care is needed to get the links right. See the ffmpeg build file for examples. Use "otool -L" to check your work.
-
-If multiple frameworks are produced by one package, it can also be tricky to get the headers correct. See vorbis and png for ways to handle unusual cases.

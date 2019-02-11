@@ -1,16 +1,9 @@
-#!/bin/bash -l
-
-export PROJ="boost"
-export VERSION="1.67.0"
-export VERSIONDL="${VERSION//./_}"
-export URL="https://dl.bintray.com/boostorg/release/$VERSION/source/boost_$VERSIONDL.tar.bz2"
-export DIRNAME="${PROJ}_${VERSIONDL}"
-export FWKS=(libboost_system libboost_filesystem boost)
-export CONFIGOPTS=""
+#!/bin/bash
 
 DEV="/Applications/Xcode.app/Contents/Developer"
 SDKROOT="$DEV/Platforms/MacOSX.platform/Developer/SDKs"
 STOCKPATH="$DEV/usr/bin:/usr/bin:/bin"
+STOCKPKGCONFIG="/usr/lib/pkgconfig"
 SRCDIR="$PWD/src"
 COMPILEDIR="$PWD/objs"
 INSTALLDIR="$PWD/installs"
@@ -19,8 +12,10 @@ PLIST_TEMPLATE="$PWD/../Info-template.plist"
 
 if [ "$DLNAME" == "" ]; then DLNAME="${URL##*/}"; fi
 if [ "$DIRNAME" == "" ]; then DIRNAME="$PROJ-$VERSION"; fi
-if [ "$FWKS" == "" ]; then FWKS=("lib$PROJ"); fi
+if [ "$FWKS" == "" ]; then FWKS="lib$PROJ"; fi
+if [ "$HEADERROOT" == "" ]; then HEADERROOT="include"; fi
 
+FWKS=( $FWKS )
 
 # grab source
 if [ ! -f "$DLNAME" ]; then
@@ -43,43 +38,53 @@ if [ -d "$INSTALLDIR" ]; then rm -r "$INSTALLDIR"; fi
 IDIR="$INSTALLDIR/x86_64"
 mkdir -p "$IDIR"
 CDIR="$COMPILEDIR/x86_64"
-mkdir -p "$COMPILEDIR"
-cp -a "$SRCDIR" "$CDIR"
+mkdir -p "$CDIR"
 cd "$CDIR"
 
-export PATH="$STOCKPATH"
+export PATH="$PATH_OVERRIDE:$STOCKPATH"
+export PKG_CONFIG_PATH="$PKGCONFIG_OVERRIDE:$STOCKPKGCONFIG"
 export ENVP="MACOSX_DEPLOYMENT_TARGET=10.9"
 FLAGS="-arch x86_64 -mmacosx-version-min=10.9"
 
+if [ "$HOSTFLAG" == "" ]; then HOSTFLAG='--host="x86_64-apple-darwin13"'; fi
 env \
   CC="$DEV/usr/bin/gcc" \
   CPP="$DEV/usr/bin/gcc -E" \
   LD="$DEV/usr/bin/g++" \
   CFLAGS="$FLAGS" \
   LDFLAGS="$FLAGS" \
-  ./bootstrap.sh --prefix="$IDIR" --with-libraries=filesystem,system
-
-./b2 install
+  PATH="$PATH" \
+  PKG_CONFIG_PATH="$PKG_CONFIG_PATH" \
+  "$SRCDIR/configure" --prefix="$IDIR" $CONFIGOPTS $HOSTFLAG
+make
+make install
 
 # Done with compiling
-cd "$FWKDIR"
-rm -r "$COMPILEDIR"
-rm -r "$SRCDIR"
+if [ "$DEBUG" == "" ]; then
+  rm -rf "$COMPILEDIR"
+  rm -r "$SRCDIR"
+fi
+
+if [ "$NOPACKAGING" == "1" ]; then exit; fi
 
 # Update shared-library paths
 for arch in x86_64; do
   LIBDIR="$INSTALLDIR/$arch/lib"
   for lib in "${FWKS[@]}"; do
-    if [ -f "$LIBDIR/$lib.dylib" ]; then
-      lname=${lib#lib}
-      install_name_tool -id "@executable_path/../Frameworks/$lname.framework/Versions/A/$lname" "$LIBDIR/$lib.dylib"
-
-      # fix links to sibling libraries
-      for elib in "${FWKS[@]}"; do
-        ename=${elib#lib}
-        install_name_tool -change "$elib.dylib" "@executable_path/../Frameworks/$ename.framework/Versions/A/$ename" "$LIBDIR/$lib.dylib"
-      done
-    fi
+    lname=${lib#lib}
+    dylibvar="DYLIBNAME_$lib"
+    dylibname="${!dylibvar}"
+    if [ "$dylibname" == "" ]; then dylibname="$lib.dylib"; fi
+    install_name_tool -id "@executable_path/../Frameworks/$lname.framework/Versions/A/$lname" "$LIBDIR/$dylibname"
+    
+    # fix links to sibling libraries
+    for elib in "${FWKS[@]}"; do
+      ename=${elib#lib}
+      edylibvar="DYLIBNAME_$elib"
+      edylibname="${!edylibvar}"
+      if [ "$edylibname" == "" ]; then edylibname="$elib.dylib"; fi
+      install_name_tool -change "$LIBDIR/$edylibname" "@executable_path/../Frameworks/$ename.framework/Versions/A/$ename" "$LIBDIR/$dylibname"
+    done
   done
 done
 
@@ -91,39 +96,37 @@ for lib in "${FWKS[@]}"; do
   if [ -d "$FDIR" ]; then rm -r "$FDIR"; fi
   mkdir -p "$FDIR/Versions/A/Headers"
   mkdir -p "$FDIR/Versions/A/Resources"
-
-  # create binary
-  if [ -f "$INSTALLDIR/x86_64/lib/$lib.dylib" ]; then
-    cp "$INSTALLDIR/x86_64/lib/$lib.dylib" "$FDIR/Versions/A/$lname"
-  fi
-
+  
   cd "$FDIR/Versions"
   ln -s A Current
-
+  
   cd "$FDIR"
   ln -s Versions/Current/Headers
   ln -s Versions/Current/Resources
-  if [ -f "Versions/Current/$lname" ]; then
-    ln -s Versions/Current/$lname
-  fi
-
+  ln -s Versions/Current/$lname
+  
+  # copy binary
+  dylibvar="DYLIBNAME_$lib"
+  dylibname="${!dylibvar}"
+  if [ "$dylibname" == "" ]; then dylibname="$lib.dylib"; fi
+  cp "$INSTALLDIR/x86_64/lib/$dylibname" "$FDIR/Versions/A/$lname"
+  
   # create Info.plist
   cp "$PLIST_TEMPLATE" "$FDIR/Resources/Info.plist"
   sed -i '' -e s/\$FRAMEWORK_NAME/$lname/g "$FDIR/Resources/Info.plist"
-  sed -i '' -e s/\$FRAMEWORK_VERSION/$FWK_VERSION/g "$FDIR/Resources/Info.plist"
-
-  # create headers
+  sed -i '' -e s/\$FRAMEWORK_VERSION/$VERSION/g "$FDIR/Resources/Info.plist"
+  
+  # copy headers
   HNAME="$FDIR/Headers"
   mkdir -p "$HNAME"
   cd "$INSTALLDIR/x86_64/include"
-  FINDPATH=${lname/_/\/}
-  for hfile in `find $FINDPATH -type f`; do
+  for hfile in `find . -type f`; do
     mkdir -p "$HNAME"/`dirname $hfile`
     cp $hfile "$HNAME/$hfile"
   done
-
+    
 done
 
 
 # done with installdir
-rm -r "$INSTALLDIR"
+if [ "$DEBUG" == "" ]; then rm -r "$INSTALLDIR"; fi
