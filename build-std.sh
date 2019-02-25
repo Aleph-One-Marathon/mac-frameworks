@@ -46,8 +46,8 @@ export PKG_CONFIG_PATH="$PKGCONFIG_OVERRIDE:$STOCKPKGCONFIG"
 export ENVP="MACOSX_DEPLOYMENT_TARGET=10.9"
 FLAGS="-arch x86_64 -mmacosx-version-min=10.9"
 
-if [ "$HOSTFLAG" == "" ]; then HOSTFLAG='--host="x86_64-apple-darwin13"'; fi
 env \
+  "$SRCDIR/configure" --prefix="$IDIR" $CONFIGOPTS
   CC="$DEV/usr/bin/gcc" \
   CPP="$DEV/usr/bin/gcc -E" \
   LD="$DEV/usr/bin/g++" \
@@ -55,7 +55,6 @@ env \
   LDFLAGS="$FLAGS" \
   PATH="$PATH" \
   PKG_CONFIG_PATH="$PKG_CONFIG_PATH" \
-  "$SRCDIR/configure" --prefix="$IDIR" $CONFIGOPTS $HOSTFLAG
 make
 make install
 
