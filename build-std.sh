@@ -46,8 +46,7 @@ export PKG_CONFIG_PATH="$PKGCONFIG_OVERRIDE:$STOCKPKGCONFIG"
 export ENVP="MACOSX_DEPLOYMENT_TARGET=10.9"
 FLAGS="-arch x86_64 -mmacosx-version-min=10.9"
 
-env \
-  "$SRCDIR/configure" --prefix="$IDIR" $CONFIGOPTS
+env -i \
   CC="$DEV/usr/bin/gcc" \
   CPP="$DEV/usr/bin/gcc -E" \
   LD="$DEV/usr/bin/g++" \
@@ -55,8 +54,25 @@ env \
   LDFLAGS="$FLAGS" \
   PATH="$PATH" \
   PKG_CONFIG_PATH="$PKG_CONFIG_PATH" \
-make
-make install
+  "$SRCDIR/configure" --prefix="$IDIR" $CONFIGOPTS
+env -i \
+  CC="$DEV/usr/bin/gcc" \
+  CPP="$DEV/usr/bin/gcc -E" \
+  LD="$DEV/usr/bin/g++" \
+  CFLAGS="$FLAGS" \
+  LDFLAGS="$FLAGS" \
+  PATH="$PATH" \
+  PKG_CONFIG_PATH="$PKG_CONFIG_PATH" \
+  make
+env -i \
+  CC="$DEV/usr/bin/gcc" \
+  CPP="$DEV/usr/bin/gcc -E" \
+  LD="$DEV/usr/bin/g++" \
+  CFLAGS="$FLAGS" \
+  LDFLAGS="$FLAGS" \
+  PATH="$PATH" \
+  PKG_CONFIG_PATH="$PKG_CONFIG_PATH" \
+  make install
 
 # Done with compiling
 if [ "$DEBUG" == "" ]; then
