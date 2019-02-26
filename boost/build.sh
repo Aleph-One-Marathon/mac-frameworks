@@ -7,6 +7,7 @@ export URL="https://dl.bintray.com/boostorg/release/$VERSION/source/boost_$VERSI
 export DIRNAME="${PROJ}_${VERSIONDL}"
 export FWKS=(libboost_system libboost_filesystem boost)
 export CONFIGOPTS=""
+export LICENSE="LICENSE_1_0.txt"
 
 DEV="/Applications/Xcode.app/Contents/Developer"
 SDKROOT="$DEV/Platforms/MacOSX.platform/Developer/SDKs"
@@ -35,6 +36,12 @@ case "$DLNAME" in
   *         ) echo "Cannot unpack $DLNAME" ; exit ;;
 esac
 mv "$DIRNAME" "$SRCDIR"
+
+if [ "$LICENSE" != "" ]; then
+  if [ -f "$SRCDIR/$LICENSE" ]; then
+    cp "$SRCDIR/$LICENSE" "License.txt"
+  fi
+fi
 
 if [ -d "$COMPILEDIR" ]; then rm -r "$COMPILEDIR"; fi
 if [ -d "$INSTALLDIR" ]; then rm -r "$INSTALLDIR"; fi

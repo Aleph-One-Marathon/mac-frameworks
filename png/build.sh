@@ -5,6 +5,7 @@ export VERSION="1.6.36"
 export URL="https://download.sourceforge.net/libpng/libpng-1.6.36.tar.gz"
 export DIRNAME="lib$PROJ-$VERSION"
 export CONFIGOPTS="--disable-static"
+export LICENSE="LICENSE"
 
 ../build-std.sh
 

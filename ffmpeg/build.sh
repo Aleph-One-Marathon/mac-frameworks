@@ -20,6 +20,7 @@ export DYLIBNAME_libavcodec="libavcodec.58.dylib"
 export DYLIBNAME_libavformat="libavformat.58.dylib"
 export DYLIBNAME_libavutil="libavutil.56.dylib"
 export DYLIBNAME_swscale="libswscale.5.dylib"
+export LICENSE="LICENSE.md"
 
 ../build-std.sh
 

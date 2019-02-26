@@ -1,7 +1,9 @@
 **/*.tar.gz
 **/*.tar.bz2
 **/*.zip
+**/*.dmg
 **/*.framework
 */src
 */objs
 */installs
+*/License.txt

@@ -31,6 +31,12 @@ case "$DLNAME" in
 esac
 mv "$DIRNAME" "$SRCDIR"
 
+if [ "$LICENSE" != "" ]; then
+  if [ -f "$SRCDIR/$LICENSE" ]; then
+    cp "$SRCDIR/$LICENSE" "License.txt"
+  fi
+fi
+
 if [ -d "$COMPILEDIR" ]; then rm -r "$COMPILEDIR"; fi
 if [ -d "$INSTALLDIR" ]; then rm -r "$INSTALLDIR"; fi
 
