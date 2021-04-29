@@ -22,7 +22,7 @@ done
 
 # Frameworks (binary and source)
 for DIR in sdl2 sdl2_image sdl2_net sdl2_ttf \
-           boost ffmpeg jpeg png speex speexdsp zziplib; do
+           boost ffmpeg jpeg png speex speexdsp webp zziplib; do
   cd ../$DIR
   ./build.sh
   for FWK in *.framework; do
