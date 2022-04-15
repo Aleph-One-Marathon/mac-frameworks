@@ -38,7 +38,7 @@ done
 VERSION=`date +'%Y%m%d'`
 DMGPATH="aleph-mac-frameworks-$VERSION.dmg"
 if [ -f "$DMGPATH" ]; then rm "$DMGPATH"; fi
-hdiutil create -ov -fs HFS+ -format UDBZ -layout GPTSPUD -srcfolder "$PKGDIR" -volname "Aleph One Frameworks $VERSION" "$DMGPATH"
+hdiutil create -ov -fs HFS+ -format ULFO -layout GPTSPUD -srcfolder "$PKGDIR" -volname "Aleph One Frameworks $VERSION" "$DMGPATH"
 if [ "$SIGNATURE" == "" ]; then
   echo "No signature provided. Disk image is unsigned."
 else
